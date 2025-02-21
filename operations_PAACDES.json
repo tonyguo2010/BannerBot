@@ -1,0 +1,29 @@
+{
+  "form": "PAACDES",
+  "data_used" : {
+    "PClass" : "JE06D",
+    "Code" : "CP764"
+  },
+  "opers" : [
+    {
+      "widget" : "Input_ID_Position Class" ,
+      "value"  : "JE06D"
+    },
+    {
+      "widget" : "Btn_ID_Go" ,
+      "value"  : "click"
+    },
+    {
+      "widget" : "Input_ID_Code" ,
+      "value"  : "CP764"
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "F10"
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "F5"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "form": "NBAPOSN",
+  "data_used" : {
+    "PClass" : "JE06D",
+    "Positon" : "989199",
+    "Code" : "CP764"
+  },
+  "opers" : [
+    {
+      "widget" : "Input_ID_Position Number" ,
+      "value"  : "989199"
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "Return",
+      "times" : 3
+    },
+    {
+      "widget" : "Input_Path_Position Class" ,
+      "value"  : "JE06D"
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "F10"
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "Return",
+      "times" : 2
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "F5"
+    }
+  ]
+}

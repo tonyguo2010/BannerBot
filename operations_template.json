@@ -1,0 +1,42 @@
+{
+  "form": "Form Name",
+  "data_used" : {
+    "_comments" : "We can use the content in data_used to batch update in the script",
+    "To update" : "Info used in script"
+  },
+  "Excel" : {
+    "file_name": "sample.xlsx",
+    "sheet_index": 0,
+    "col_index": 1
+  },
+  "opers" : [
+    {
+      "_comments" : "This is to set a value by widget's ID, Input_ID_Widget's name",
+      "widget" : "Input_ID_Position Number" ,
+      "value"  : "989199"
+    },
+    {
+      "_comments" : "This is to simulate a key press, with repeating times",
+      "widget" : "Glb_Key" ,
+      "value"  : "Return",
+      "times" : 3
+    },
+    {
+      "widget" : "Input_Path_Position Class" ,
+      "value"  : "JE06D"
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "F10"
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "Return",
+      "times" : 2
+    },
+    {
+      "widget" : "Glb_Key" ,
+      "value"  : "F5"
+    }
+  ]
+}
