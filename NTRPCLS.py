@@ -1,7 +1,8 @@
 import os
 import FormBase
 import JsonParser
-operations = JsonParser.loadJsonFromFile('operations_' + os.path.basename(__file__).replace('.py', '').upper() + '.json')
+# operations = JsonParser.loadJsonFromFile('operations_' + os.path.basename(__file__).replace('.py', '').upper() + '.json')
+operations = JsonParser.loadScriptFromJson(os.path.basename(__file__).replace('.py', '').upper() + '.json')
 
 widgets = {
     "Position Class Code":{"id": "inp:key_block_pclsCode", "xpath": "/html/body/div/div/div[2]/div/div/form/div/div/div/div/div/div/input"},

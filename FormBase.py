@@ -14,6 +14,8 @@ working_form = ''
 
 timing = JsonParser.loadJsonFromFile('timing.json')
 
+skips = ['open', 'setWindowSize']
+
 def dispatch_form(driver):
     FormManager.dispatch_for(driver)
 
@@ -231,7 +233,61 @@ def get_input_by_id(driver, id):
     return input.get_attribute('title')
 
 
+def click_by_css(driver, css):
+    try:
+        btn = driver.find_element(By.CSS_SELECTOR, css)
+        btn.click()
+    except Exception as e:
+        print("error in clicking " + css)
+        print(e)
+    finally:
+        sleep(timing['after_click'])
+
+
 def process_operations(driver, widgets, operations, header = None, hijack_input = None):
+    for operation in operations['commands']:
+        if operation['command'] in skips:
+            continue
+        cmds = operation['target'].split('=')
+        print(operation['command'] + ' ' + cmds[0] + ' : ' + cmds[1] + ' => ' + operation['value'])
+
+        if operation['command'] == 'type':
+            if cmds[0] == 'id':
+                if header is not None and header == cmds[1]:
+                    set_input_by_id(driver, header, hijack_input)
+                else:
+                    set_input_by_id(driver, cmds[1], operation['value'])
+
+        elif operation['command'] == 'click':
+            if cmds[0] == 'css':
+                click_by_css(driver, cmds[1])
+            elif cmds[0] == 'id':
+                click_by_id(driver, cmds[1])
+
+        elif cmds[0] == 'Glb':
+            times = 1
+            if 'times' in operation:
+                times = operation['times']
+            while times > 0:
+                global_key(driver, operation['value'])
+                times -= 1
+
+        # elif cmds[0] == 'Cmb':
+        elif cmds[0] == 'Output':
+            value = ''
+
+            if cmds[1] == 'Path':
+                value = get_input_by_xpath(driver, widgets[cmds[2]]['xpath'])
+            elif cmds[1] == 'ID':
+                value = get_input_by_id(driver, widgets[cmds[2]]['id'])
+
+            print(value)
+
+        elif cmds[0] == 'Exit':
+            driver.close()
+            # sys.exit(0)
+
+def process_operations_old(driver, widgets, operations, header = None, hijack_input = None):
     for operation in operations['opers']:
         print(" updating " + operation['widget'] + ' to ' + operation['value'])
         cmds = operation['widget'].split('_')
@@ -280,7 +336,7 @@ def process_operations(driver, widgets, operations, header = None, hijack_input 
 
 def handle(driver, widgets, operations):
     # try:
-        if len(operations['opers']) == 0:
+        if len(operations['commands']) == 0:
             raise Exception('No operations found')
 
         file_inputs = []
@@ -290,6 +346,7 @@ def handle(driver, widgets, operations):
                 operations['Excel']['sheet_index'],
                 operations['Excel']['col_index']
             )
+        print(file_inputs)
 
         if len(file_inputs) > 0:
             index = 0
