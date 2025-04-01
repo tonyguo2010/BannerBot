@@ -10,14 +10,14 @@ from selenium.common.exceptions import TimeoutException
 from time import sleep
 
 import FormBase
+import JsonParser
 
-if len(sys.argv) == 3:
-    FormBase.working_form = sys.argv[1]
-    FormBase.envir = sys.argv[2]
+if len(sys.argv) == 2:
+    FormBase.script = sys.argv[1]
 else:
-    FormBase.working_form = 'NTRPCLS'
-    # exit(-1)
+    FormBase.script = 'PCL.json'
 
+FormBase.base_url = JsonParser.loadBaseUrl(FormBase.script)
 
 # Set options for not prompting DevTools information
 options = Options()
@@ -27,34 +27,16 @@ options.add_argument("--start-maximized")
 print("testing started")
 driver = webdriver.Chrome(options=options)
 
-# if FormBase.working_form == 'self':
-#     driver.get("https://" + FormBase.envir + ".centennialcollege.ca/ssomanager/c/SSB")
-# else:
-driver.get("https://" + FormBase.envir + ".centennialcollege.ca:7443/applicationNavigator/seamless")
+# driver.get(FormBase.base_url)
 
-def get_browser_status(driver):
-    # myElem = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.ID, '/html/body/nav[5]/div/div[1]/ul/li[3]/h2')))
-    return True
+driver.get('https://tprdn.centennialcollege.ca/applicationNavigator')
+sleep(2)
+FormBase.auto_login(driver)
+sleep(5)
 
-def line():
-    print('  == ' + str(sys._getframe(1).f_lineno) + ' == ')
-
-while True:
-    state = get_browser_status(driver)
-    if state is False:
-        sleep(3)
-        continue
-    form_code = FormBase.get_form_code(driver)
-
-    if form_code == 0:
-        FormBase.auto_login(driver)
-    if form_code == 1:
-        FormBase.to_form(driver, FormBase.working_form)
-    if form_code == 2:
-        FormBase.dispatch_form(driver)
-    # if form_code == 3:
-    #     FormBase.to_self_service(driver)
-    sleep(3)
+operations = JsonParser.loadScriptFromJson(FormBase.script)
+print(operations)
+FormBase.handle(driver, operations)
 
 # Close the driver
 driver.quit()

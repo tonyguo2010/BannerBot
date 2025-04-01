@@ -4,5 +4,7 @@
   "after_click" : 2,
   "after_select" : 0.5,
   "pre_typing" : 1.5,
-  "after_typing" : 1.5
+  "after_typing" : 1.5,
+  "pre_sendkey" : 1.5,
+  "after_sendkey" : 10
 }

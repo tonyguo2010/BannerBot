@@ -10,16 +10,17 @@ from selenium.webdriver.common.keys import Keys
 from time import sleep
 
 import JsonParser
-
-collect_tags = ['button', 'input', 'label', 'h2', 'li']
-
-options = Options()
-options.add_experimental_option("excludeSwitches", ["enable-logging"])
-options.add_argument("--start-maximized")
-
-print("testing started")
-driver = webdriver.Chrome(options=options)
-driver.get("https://tprdn.centennialcollege.ca:7443/applicationNavigator/seamless")
+JsonParser.loadBaseUrl('PCL.json')
+#
+# collect_tags = ['button', 'input', 'label', 'h2', 'li']
+#
+# options = Options()
+# options.add_experimental_option("excludeSwitches", ["enable-logging"])
+# options.add_argument("--start-maximized")
+#
+# print("testing started")
+# driver = webdriver.Chrome(options=options)
+# driver.get("https://tprdn.centennialcollege.ca:7443/applicationNavigator/seamless")
 
 def recursive(root, widgets):
     elements = root.find_elements(By.XPATH, "*")
@@ -110,7 +111,7 @@ def output_elements_id(root):
 
 
 print()
-
+'''
 account = JsonParser.loadJsonFromFile('account.json')
 login_ID = driver.find_element(By.ID, 'usernameUserInput')
 login_pwd = driver.find_element(By.ID, 'password')
@@ -137,7 +138,7 @@ while True:
     except:
         pass
     sleep(10)
-
+'''
 '''output_elements_id(root)
 
 user = driver.find_element(By.XPATH, '/html/body/div/div/div/div/form/div/div/input')

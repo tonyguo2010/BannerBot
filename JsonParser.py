@@ -14,6 +14,11 @@ def loadScriptFromJson(file_name):
         return steps
 
     return '{}'
+
+def loadBaseUrl(file_name):
+    j_content = loadJsonFromFile(file_name)
+    base_url = j_content['url']
+    return base_url
 #
 # content = loadScriptFromJson("PCL.json")
 # steps = content['tests'][0]['commands']

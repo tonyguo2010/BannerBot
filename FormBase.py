@@ -6,18 +6,14 @@ from time import sleep
 from selenium.webdriver.support.ui import Select
 
 import ExcelParser
-import FormManager
 import JsonParser
 
-envir = 'tprdn'
-working_form = ''
 
 timing = JsonParser.loadJsonFromFile('timing.json')
 
-skips = ['open', 'setWindowSize']
-
-def dispatch_form(driver):
-    FormManager.dispatch_for(driver)
+skips = ['setWindowSize', 'selectFrame']
+base_url : str= ''
+script : str = ''
 
 def getKey(key):
     if key == 'Space':
@@ -26,7 +22,7 @@ def getKey(key):
         return Keys.TAB
     elif key == 'ESC':
         return Keys.ESCAPE
-    elif key == 'Return':
+    elif key == '${KEY_ENTER}':
         return Keys.RETURN
     elif key == 'F1':
         return Keys.F1
@@ -244,7 +240,24 @@ def click_by_css(driver, css):
         sleep(timing['after_click'])
 
 
-def process_operations(driver, widgets, operations, header = None, hijack_input = None):
+def sendkey_by_css(driver, css, value):
+    input = driver.find_element(By.CSS_SELECTOR, css)
+    input.click()
+    sleep(timing['pre_sendkey'])
+    input.send_keys(getKey(value))
+    sleep(timing['after_sendkey'])
+
+def sendkey_by_id(driver, id, value):
+    input = driver.find_element(By.ID, id)
+    # print(input)
+    # input.send_keys(Keys.BACKSPACE)
+    input.click()
+    sleep(timing['pre_sendkey'])
+    input.send_keys(getKey(value))
+    sleep(timing['after_sendkey'])
+
+
+def process_operations(driver, operations, header = None, hijack_input = None):
     for operation in operations['commands']:
         if operation['command'] in skips:
             continue
@@ -257,6 +270,16 @@ def process_operations(driver, widgets, operations, header = None, hijack_input 
                     set_input_by_id(driver, header, hijack_input)
                 else:
                     set_input_by_id(driver, cmds[1], operation['value'])
+
+        elif operation['command'] == 'open':
+            driver.get(operation['target'])
+            sleep(timing['after_sendkey'])
+
+        elif operation['command'] == 'sendKeys':
+            if cmds[0] == 'css':
+                sendkey_by_css(driver, cmds[1], operation['value'])
+            elif cmds[0] == 'id':
+                sendkey_by_id(driver, cmds[1], operation['value'])
 
         elif operation['command'] == 'click':
             if cmds[0] == 'css':
@@ -276,10 +299,10 @@ def process_operations(driver, widgets, operations, header = None, hijack_input 
         elif cmds[0] == 'Output':
             value = ''
 
-            if cmds[1] == 'Path':
-                value = get_input_by_xpath(driver, widgets[cmds[2]]['xpath'])
-            elif cmds[1] == 'ID':
-                value = get_input_by_id(driver, widgets[cmds[2]]['id'])
+            # if cmds[1] == 'Path':
+            #     value = get_input_by_xpath(driver, widgets[cmds[2]]['xpath'])
+            # elif cmds[1] == 'ID':
+            #     value = get_input_by_id(driver, widgets[cmds[2]]['id'])
 
             print(value)
 
@@ -334,10 +357,21 @@ def process_operations_old(driver, widgets, operations, header = None, hijack_in
             # sys.exit(0)
 
 
-def handle(driver, widgets, operations):
+def handle(driver, operations):
     # try:
         if len(operations['commands']) == 0:
             raise Exception('No operations found')
+
+        '''
+          "Excel": {
+          "file_name" : "pcls.xlsx",
+          "sheet_index" : 0,   // start from 0
+          "col_index" : 1      // start from 1
+        },
+        "commands": [{
+          "id": "95faea04-084b-448e-8722-cf8320fa46fa",
+          ......
+        '''
 
         file_inputs = []
         if "Excel" in operations:
@@ -356,14 +390,6 @@ def handle(driver, widgets, operations):
                 if index == 1:
                     header = hijack
                     continue
-                process_operations(driver, widgets, operations, header, hijack)
+                process_operations(driver, operations, header, hijack)
         else:
-            process_operations(driver, widgets, operations)
-
-
-    #
-    # except:
-    #     print('exception caught')
-    #     pass
-
-
+            process_operations(driver, operations)

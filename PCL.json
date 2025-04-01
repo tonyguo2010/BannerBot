@@ -1,0 +1,96 @@
+{
+  "id": "dbe6fe16-382a-4c03-9cc6-d97f3e98d46e",
+  "version": "2.0",
+  "name": "PCL",
+  "url": "https://tprdn.centennialcollege.ca:7443/BannerAdmin/?form=NTRPCLS",
+  "tests": [{
+    "id": "26026fba-fd35-47fd-a911-171d991a3457",
+    "name": "PCL",
+    "Excel": {
+      "file_name" : "pcls.xlsx",
+      "sheet_index" : 0,
+      "col_index" : 1
+    },
+    "commands": [{
+      "id": "95faea04-084b-448e-8722-cf8320fa46fa",
+      "comment": "",
+      "command": "open",
+      "target": "https://tprdn.centennialcollege.ca:7443/BannerAdmin/?form=NTRPCLS",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "31afc721-6e34-4311-b1de-154418b8949e",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1920x1010",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "179c357b-22a9-49d3-8061-b65702cd2f88",
+      "comment": "",
+      "command": "click",
+      "target": "id=inp:key_block_pclsCode",
+      "targets": [
+        ["id=inp:key_block_pclsCode", "id"],
+        ["name=pclsCode", "name"],
+        ["css=#inp\\3Akey_block_pclsCode", "css:finder"],
+        ["xpath=//input[@id='inp:key_block_pclsCode']", "xpath:attributes"],
+        ["xpath=//div[@id='pnlKeyBlock_pclsCode']/input", "xpath:idRelative"],
+        ["xpath=//div/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "67e9f47c-3930-470b-8e47-acfca911fefa",
+      "comment": "",
+      "command": "type",
+      "target": "id=inp:key_block_pclsCode",
+      "targets": [
+        ["id=inp:key_block_pclsCode", "id"],
+        ["name=pclsCode", "name"],
+        ["css=#inp\\3Akey_block_pclsCode", "css:finder"],
+        ["xpath=//input[@id='inp:key_block_pclsCode']", "xpath:attributes"],
+        ["xpath=//div[@id='pnlKeyBlock_pclsCode']/input", "xpath:idRelative"],
+        ["xpath=//div/input", "xpath:position"]
+      ],
+      "value": "J127D"
+    }, {
+      "id": "886894a9-bd2e-457c-b019-38790e3194c4",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "id=inp:key_block_pclsCode",
+      "targets": [
+        ["id=inp:key_block_pclsCode", "id"],
+        ["name=pclsCode", "name"],
+        ["css=#inp\\3Akey_block_pclsCode", "css:finder"],
+        ["xpath=//input[@id='inp:key_block_pclsCode']", "xpath:attributes"],
+        ["xpath=//div[@id='pnlKeyBlock_pclsCode']/input", "xpath:idRelative"],
+        ["xpath=//div/input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }, {
+      "id": "772901bc-39ad-4950-8606-63ff8d7a893f",
+      "comment": "",
+      "command": "click",
+      "target": "id=frames5",
+      "targets": [
+        ["id=frames5", "id"],
+        ["css=#frames5", "css:finder"],
+        ["xpath=//button[@id='frames5']", "xpath:attributes"],
+        ["xpath=//div[@id='frames4']/button", "xpath:idRelative"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Go')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "44b9bde5-f4cf-4373-b650-d1c4658e0114",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["26026fba-fd35-47fd-a911-171d991a3457"]
+  }],
+  "urls": ["https://tprdn.centennialcollege.ca:7443/applicationNavigator/seamless"],
+  "plugins": []
+}
