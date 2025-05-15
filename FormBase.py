@@ -93,8 +93,32 @@ def click_by_id(driver, id):
     finally:
         sleep(timing['after_click'])
 
+def select_dropdown_id_text(driver, id, text):
+    try:
+        select = Select(driver.find_element(By.ID, id))
+        select.select_by_visible_text(text)
+    except Exception as e:
+        print("error in selecting " + id)
+        print(e)
+    finally:
+        sleep(timing['after_select'])
+
+def select_dropdown_text(driver, xpath, text):
+    try:
+        print(xpath)
+        print(text)
+        select = Select(driver.find_element(By.XPATH, xpath))
+        select.select_by_visible_text(text)
+    except Exception as e:
+        print("error in selecting " + xpath)
+        print(e)
+    finally:
+        sleep(timing['after_select'])
+
 def select_dropdown(driver, xpath, text):
     try:
+        print(xpath)
+        print(text)
         select = Select(driver.find_element(By.XPATH, xpath))
         select.select_by_value(text)
     except Exception as e:
@@ -197,7 +221,16 @@ def get_form_name(driver):
 
 def set_input_by_xpath(driver, xpath, value):
     input = driver.find_element(By.XPATH, xpath)
-    # input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
+    input.send_keys(Keys.BACKSPACE)
     input.click()
     sleep(timing['pre_input'])
     input.clear()
@@ -213,20 +246,45 @@ def set_input_by_id(driver, id, value):
     input.click()
     sleep(timing['pre_input'])
     input.clear()
+    print('clear in set_input_by_id')
     input.send_keys(value)
     sleep(timing['after_input'])
 
 
+def update_employee(employee_id, header, value):
+    for employee in ExcelParser.employees:
+        if employee['SPRIDEN_ID'] == employee_id:
+            employee[header] = value
+            break
+
+
 def get_input_by_xpath(driver, xpath):
     sleep(timing['pre_input'])
-    input = driver.find_element(By.XPATH, xpath)
-    return input.get_attribute('title')
+    table = driver.find_element(By.XPATH, xpath)
+    rows = table.find_elements(By.TAG_NAME, "tr")  # tr elements represent table rows
+
+    # Parse each row
+    taxs = []
+    for i, row in enumerate(rows):
+        cols = row.find_elements(By.TAG_NAME, "td")  # td elements represent table cells
+        employee_id = script.removesuffix('.side')
+
+        row_data = []
+        if cols[0].text.strip() == 'Federal tax deduction on bonus':
+            update_employee(employee_id, 'FED_BONUS_TAX', cols[1].text)
+        if cols[0].text.strip() == 'Provincial tax deduction on bonus':
+            update_employee(employee_id, 'ONT_BONUS_TAX', cols[1].text)
+        if cols[0].text.strip() == 'Total tax deductions on bonus':
+            update_employee(employee_id, 'TOT_BONUS_TAX', cols[2].text)
+    return taxs
+    # return input.get_attribute('title')
 
 
 def get_input_by_id(driver, id):
     sleep(timing['pre_input'])
     input = driver.find_element(By.ID, id)
-    return input.get_attribute('title')
+    return input.text
+    # return input.get_attribute('title')
 
 
 def click_by_css(driver, css):
@@ -262,7 +320,7 @@ def process_operations(driver, operations, header = None, hijack_input = None):
         if operation['command'] in skips:
             continue
         cmds = operation['target'].split('=')
-        print(operation['command'] + ' ' + cmds[0] + ' : ' + cmds[1] + ' => ' + operation['value'])
+        print(operation['command'] + ' ' + operation['target'] + ' => ' + operation['value'])
 
         if operation['command'] == 'type':
             if cmds[0] == 'id':
@@ -270,6 +328,11 @@ def process_operations(driver, operations, header = None, hijack_input = None):
                     set_input_by_id(driver, header, hijack_input)
                 else:
                     set_input_by_id(driver, cmds[1], operation['value'])
+            elif cmds[0] == 'xpath':
+                if header is not None and header == cmds[1]:
+                    set_input_by_xpath(driver, header, hijack_input)
+                else:
+                    set_input_by_xpath(driver, cmds[1], operation['value'])
 
         elif operation['command'] == 'open':
             driver.get(operation['target'])
@@ -287,6 +350,28 @@ def process_operations(driver, operations, header = None, hijack_input = None):
             elif cmds[0] == 'id':
                 click_by_id(driver, cmds[1])
 
+        elif operation['command'] == 'select':
+            value : str = operation['value']
+            if value.startswith('label='):
+                value = value.split('=')[1]
+                if cmds[0] == 'xpath':
+                    select_dropdown_text(driver, cmds[1], value)
+                elif cmds[0] == 'id':
+                    select_dropdown_id_text(driver, cmds[1], value)
+            else:
+                if cmds[0] == 'xpath':
+                    select_dropdown(driver, cmds[1], operation['value'])
+
+        elif operation['command'] == 'Output':
+            value = ''
+
+            if cmds[0] == 'id':
+                value = get_input_by_id(driver, cmds[1])
+            elif cmds[0] == 'xpath':
+                value = get_input_by_xpath(driver, cmds[1])
+
+            print(value)
+
         elif cmds[0] == 'Glb':
             times = 1
             if 'times' in operation:
@@ -296,16 +381,6 @@ def process_operations(driver, operations, header = None, hijack_input = None):
                 times -= 1
 
         # elif cmds[0] == 'Cmb':
-        elif cmds[0] == 'Output':
-            value = ''
-
-            # if cmds[1] == 'Path':
-            #     value = get_input_by_xpath(driver, widgets[cmds[2]]['xpath'])
-            # elif cmds[1] == 'ID':
-            #     value = get_input_by_id(driver, widgets[cmds[2]]['id'])
-
-            print(value)
-
         elif cmds[0] == 'Exit':
             driver.close()
             # sys.exit(0)

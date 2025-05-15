@@ -1,5 +1,8 @@
 from openpyxl import load_workbook
+from openpyxl import Workbook
+import ScriptGenerator
 
+employees = []
 
 def load_list_from_sheet_by_col(filename : str, sheet_index : int, col_index: int):
     result = []
@@ -12,3 +15,54 @@ def load_list_from_sheet_by_col(filename : str, sheet_index : int, col_index: in
         result.append(worksheet.cell(row, col_index).value)
 
     return result
+
+def generate_side_script(filename : str):
+    scripts = []
+
+    workbook = load_workbook(filename)
+
+    worksheet = workbook[workbook.sheetnames[0]]
+
+    for i, row in enumerate(worksheet.iter_rows(), start=1):
+        if i == 1:
+            continue
+        detail = {}
+
+        for cell in row:
+            header = worksheet.cell(1, cell.column).value
+            detail[header] = cell.value
+
+        employees.append(detail)
+
+    for employee in employees:
+        script_name = ScriptGenerator.convert_row_to_script(employee)
+        scripts.append(script_name)
+
+    return scripts
+
+def save_results():
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "PDOC results"
+
+    # Add data to cells
+    ws['A1'] = "Employee ID"
+    ws['B1'] = "Name"
+    ws['C1'] = "Federal tax deduction on bonus"
+    ws['D1'] = "Provincial tax deduction on bonus"
+    ws['E1'] = "Total tax deduction on bonus"
+
+    rows = []
+    for employee in employees:
+        items = []
+        items.append(employee['SPRIDEN_ID'])
+        items.append(employee['EMPL_NAME'])
+        items.append(employee['FED_BONUS_TAX'])
+        items.append(employee['ONT_BONUS_TAX'])
+        items.append(employee['TOT_BONUS_TAX'])
+        rows.append(items)
+
+    for row in rows:
+        ws.append(row)
+
+    wb.save("output.xlsx")

@@ -15,7 +15,7 @@ import JsonParser
 if len(sys.argv) == 2:
     FormBase.script = sys.argv[1]
 else:
-    FormBase.script = 'PCL.json'
+    FormBase.script = 'PDOC.side'
 
 FormBase.base_url = JsonParser.loadBaseUrl(FormBase.script)
 
