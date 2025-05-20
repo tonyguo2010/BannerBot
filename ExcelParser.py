@@ -54,13 +54,16 @@ def save_results():
 
     rows = []
     for employee in employees:
-        items = []
-        items.append(employee['SPRIDEN_ID'])
-        items.append(employee['EMPL_NAME'])
-        items.append(employee['FED_BONUS_TAX'])
-        items.append(employee['ONT_BONUS_TAX'])
-        items.append(employee['TOT_BONUS_TAX'])
-        rows.append(items)
+        try:
+            items = []
+            items.append(employee['SPRIDEN_ID'])
+            items.append(employee['EMPL_NAME'])
+            items.append(employee['FED_BONUS_TAX'])
+            items.append(employee['ONT_BONUS_TAX'])
+            items.append(employee['TOT_BONUS_TAX'])
+            rows.append(items)
+        except:
+            print('skipped ' + employee['SPRIDEN_ID'])
 
     for row in rows:
         ws.append(row)

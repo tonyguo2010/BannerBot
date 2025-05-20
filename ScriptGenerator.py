@@ -1,4 +1,30 @@
+import ScriptLib
+
 def preload(file):
+    commands = []
+
+    commands.append(ScriptLib.command_target_value("open", "https://apps.cra-arc.gc.ca/ebci/rhpd/beta/entry", ""))
+    commands.append(ScriptLib.command_target_value("setWindowSize", "1920x1016", ""))
+    commands.append(ScriptLib.command_target_value("click", "css=.navigation_button", ""))
+    commands.append(ScriptLib.command_target_value("click", "xpath=//select", ""))
+    commands.append(ScriptLib.command_target_value("select", "xpath=//select", "label=Ontario"))
+    commands.append(ScriptLib.command_target_value("click", "css=optgroup > option:nth-child(7)", ""))
+    commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-select[2]/div/select", ""))
+    commands.append(ScriptLib.command_target_value("select", "xpath=/html/body/app-root/rccr-wet-template/div/div/main/app-step1/form/rccr-select[2]/div/select", "label=Biweekly (27 pay periods a year)"))
+    commands.append(ScriptLib.command_target_value("click", "id=datePaidYear", ""))
+    commands.append(ScriptLib.command_target_value("select", "id=datePaidYear", "label=2025"))
+    commands.append(ScriptLib.command_target_value("click", "xpath=//option[@value='2025']", ""))
+    commands.append(ScriptLib.command_target_value("click", "xpath=//div/rccr-select[2]/div/select", ""))
+    commands.append(ScriptLib.command_target_value("select", "xpath=/html/body/app-root/rccr-wet-template/div/div/main/app-step1/form/fieldset/div[2]/div/div/rccr-select[2]/div/select", "label=February"))
+    commands.append(ScriptLib.command_target_value("click", "xpath=//div/rccr-select[2]/div/select/option[3]", ""))
+    commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-select[3]/div/select", ""))
+    commands.append(ScriptLib.command_target_value("select", "xpath=//rccr-select[3]/div/select", "label=01"))
+    commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-select[3]/div/select/option[2]", ""))
+    commands.append(ScriptLib.command_target_value("click", "css=.next", ""))
+
+    file.write(','.join(commands))
+
+def preload_old(file):
     file.write('''
     {
       "id": "566c9ccb-bb48-44c0-bfbb-ac17dbf17f94",
@@ -216,6 +242,57 @@ def validate_value(value, default = False):
     return value
 
 def incomes(file, detail):
+    commands = []
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//input",  validate_value(detail['RGER_PAY'])))
+
+    commands.append(ScriptLib.command_target_value("click", "css=.ng-untouched:nth-child(2) > .radio > .form-radio", ""))
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/rccr-currency-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div/rccr-currency-input/div/div/input",  validate_value(detail['LSPM_AMT'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/rccr-currency-input[2]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div/rccr-currency-input[2]/div/div/input",  validate_value(detail['CAAT_ON_LSM_AMT'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-currency-input[3]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-currency-input[3]/div/div/input",  validate_value(detail['LYTD_AMT'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-currency-input[4]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-currency-input[4]/div/div/input",  validate_value(detail['YTD_CAL_EE_AMT'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-currency-input[5]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-currency-input[5]/div/div/input",  ""))
+
+    commands.append(ScriptLib.command_target_value("click", "css=.mrgn-bttm-md > .ng-untouched label > span:nth-child(2)", ""))
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/rccr-currency-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/rccr-currency-input/div/div/input",  validate_value(detail['TBCH_AMT'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/rccr-currency-input[2]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/rccr-currency-input[2]/div/div/input",  ""))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//fieldset/rccr-currency-input[3]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//fieldset/rccr-currency-input[3]/div/div/input",  validate_value(detail['TBNC_AMT'])))
+
+    commands.append(ScriptLib.command_target_value("click", "css=.ng-untouched:nth-child(1) > .checkbox span", ""))
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//fieldset[3]/div/div/fieldset/rccr-currency-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//fieldset[3]/div/div/fieldset/rccr-currency-input/div/div/input",  ""))
+
+    commands.append(ScriptLib.command_target_value("click", "css=.ng-untouched:nth-child(3) > .checkbox span:nth-child(2)", ""))
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div[2]/fieldset/rccr-currency-input[2]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div[2]/fieldset/rccr-currency-input[2]/div/div/input",  validate_value(detail['CAAT_ON_REG_AMT'])))
+
+    commands.append(ScriptLib.command_target_value("click", "css=.ng-untouched:nth-child(5) label", ""))
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div[3]/fieldset/rccr-currency-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div[3]/fieldset/rccr-currency-input/div/div/input",  validate_value(detail['CP_TOT_UN'])))
+
+    commands.append(ScriptLib.command_target_value("click", "css=.ng-untouched:nth-child(7) label > span:nth-child(2)", ""))
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div[4]/fieldset/rccr-currency-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div[4]/fieldset/rccr-currency-input/div/div/input",  validate_value(detail['FED_PRS_ZON'])))
+
+    commands.append(ScriptLib.command_target_value("click", "css=.next", ""))
+
+    file.write(',' + ','.join(commands))
+def incomes_old(file, detail):
     if detail['RGER_PAY'] is not None:
         file.write(''',{
       "id": "620ab309-3311-4896-a21e-c683fe7a3428",
@@ -932,6 +1009,45 @@ def incomes(file, detail):
 
 
 def additional(file, detail):
+    commands = []
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div/input", validate_value(detail['FED_PER_TAX_CRD'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-currency-input[2]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-currency-input[2]/div/div/input", validate_value(detail['FED_ADD_TAX'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-currency-input[3]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-currency-input[3]/div/div/input", validate_value(detail['ONT_PER_TAX_CRD'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-integer-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-integer-input/div/div/input", validate_value(detail['PEN_MON'], True)))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input/div/div/input", validate_value(detail['C2_AG_YTD'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input[2]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input[2]/div/div/input", validate_value(detail['CP_YTD'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input[3]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input[3]/div/div/input", validate_value(detail['C2_YTD'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-button-group[2]/div/fieldset/div/rccr-currency-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-button-group[2]/div/fieldset/div/rccr-currency-input/div/div/input", validate_value(detail['EI_AG_YTD'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-button-group[2]/div/fieldset/div/rccr-currency-input[2]/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-button-group[2]/div/fieldset/div/rccr-currency-input[2]/div/div/input", validate_value(detail['EI_YTD'])))
+
+    # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-text-input/div/div/input", ""))
+    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-text-input/div/div/input", validate_value(detail['EI_EMPR_PC'], True)))
+
+    commands.append(ScriptLib.command_target_value("click", "css=.btn-primary:nth-child(1)", ""))
+
+    commands.append(ScriptLib.command_target_value("Output", "xpath=/html/body/app-root/rccr-wet-template/div/div/main/app-results/app-results-bonus/table", ""))
+
+    file.write(',' + ','.join(commands))
+
+def additional_old(file, detail):
     if detail['FED_PER_TAX_CRD'] is not None:
         file.write('''
 , 	
@@ -1314,6 +1430,7 @@ def additional(file, detail):
       ],
       "value": ""
     }''')
+
 def convert_row_to_script(detail):
     script_name = str(detail['SPRIDEN_ID']) + '.side'
     with open(script_name, 'w') as file:
