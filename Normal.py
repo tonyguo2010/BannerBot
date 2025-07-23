@@ -19,6 +19,14 @@ if len(sys.argv) == 2:
 else:
     FormBase.script = 'PDOC.side'
 
+# Set options for not prompting DevTools information
+options = Options()
+options.add_experimental_option("excludeSwitches", ["enable-logging"])
+options.add_argument("--start-maximized")
+
+print("testing started")
+driver = webdriver.Chrome(options=options)
+
 # load input report to generate scripts, replace the default script file, execute one by one
 scripts = ExcelParser.generate_side_script('input.xlsx')
 for script in scripts:
@@ -28,13 +36,6 @@ for script in scripts:
 
         FormBase.base_url = JsonParser.loadBaseUrl(FormBase.script)
 
-        # Set options for not prompting DevTools information
-        options = Options()
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
-        options.add_argument("--start-maximized")
-
-        print("testing started")
-        driver = webdriver.Chrome(options=options)
 
         operations = JsonParser.loadScriptFromJson(FormBase.script)
         # print(operations)
