@@ -27,27 +27,51 @@ options.add_argument("--start-maximized")
 print("testing started")
 driver = webdriver.Chrome(options=options)
 
+def find_scrips():
+    all = [f for f in os.listdir('.') if os.path.isfile(f)]
+    files = []
+    for file in all:
+        name, ext = os.path.splitext(file)
+        if ext == '.side':
+            files.append(file)
+            detail = {}
+            detail['SPRIDEN_ID'] = name
+            ExcelParser.employees.append(detail)
+    return files
+
+
+headers = ExcelParser.init_headers('input.xlsx')
+scripts = find_scrips()
 # load input report to generate scripts, replace the default script file, execute one by one
-scripts = ExcelParser.generate_side_script('input.xlsx')
-for script in scripts:
-    try:
-        FormBase.script = script
-        print(script)
+if len(scripts) == 0:
+    scripts = ExcelParser.generate_side_script('input.xlsx')
 
-        FormBase.base_url = JsonParser.loadBaseUrl(FormBase.script)
+# exit(-1)
+def run_scripts(scripts):
+    for script in scripts:
+        try:
+            FormBase.script = script
+            print(script)
+
+            FormBase.base_url = JsonParser.loadBaseUrl(FormBase.script)
+
+            operations = JsonParser.loadScriptFromJson(FormBase.script)
+            # print(operations)
+            FormBase.handle(driver, operations)
+
+            # skip removing to avoid missed
+            # os.remove(script)
+        except:
+            print("Error: failed in handling " + script)
+
+        # exit(1)
+
+    ExcelParser.save_results()
 
 
-        operations = JsonParser.loadScriptFromJson(FormBase.script)
-        # print(operations)
-        FormBase.handle(driver, operations)
+if len(scripts) > 0:
+    run_scripts(scripts)
+# exit(1)
 
-        os.remove(script)
-    except:
-        print("Error: failed in handling " + script)
-
-
-    # exit(1)
-
-ExcelParser.save_results()
 # Close the driver
 driver.quit()

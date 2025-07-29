@@ -2,9 +2,10 @@
   "pre_input": 0.5,
   "after_input": 1,
   "after_click" : 0.5,
-  "after_select" : 0.01,
-  "pre_typing" : 0.01,
-  "after_typing" : 0.01,
+  "after_select" : 0.5,
+  "pre_typing" : 1.5,
+  "after_typing" : 0.5,
   "pre_sendkey" : 1.5,
-  "after_sendkey" : 3
+  "after_sendkey" : 3,
+  "checking_component_delay" : 3
 }

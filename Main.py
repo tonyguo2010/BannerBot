@@ -15,7 +15,7 @@ import JsonParser
 if len(sys.argv) == 2:
     FormBase.script = sys.argv[1]
 else:
-    FormBase.script = 'PDOC.side'
+    FormBase.script = 'EM001-EM005.side'
 
 FormBase.base_url = JsonParser.loadBaseUrl(FormBase.script)
 
@@ -35,7 +35,7 @@ FormBase.auto_login(driver)
 sleep(5)
 
 operations = JsonParser.loadScriptFromJson(FormBase.script)
-print(operations)
+# print(operations)
 FormBase.handle(driver, operations)
 
 # Close the driver

@@ -1,5 +1,6 @@
 import sys
 
+from selenium.common import NoSuchElementException
 from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.common.by import By
 from time import sleep
@@ -315,12 +316,30 @@ def sendkey_by_id(driver, id, value):
     sleep(timing['after_sendkey'])
 
 
+def validate_element(driver, value, by):
+    try:
+        print(by, value)
+        byMap = {'css' : By.CSS_SELECTOR, 'id' : By.ID, 'xpath' : By.XPATH}
+        driver.find_element(byMap[by], value)
+        return True
+    except NoSuchElementException:
+        return False
+
+
 def process_operations(driver, operations, header = None, hijack_input = None):
     for operation in operations['commands']:
         if operation['command'] in skips:
             continue
         cmds = operation['target'].split('=')
         print(operation['command'] + ' ' + operation['target'] + ' => ' + operation['value'])
+
+        element_retry = 0
+
+        while cmds[0] in ['id', 'xpath', 'css'] and validate_element(driver, cmds[1], cmds[0]) == False:
+            element_retry += 1
+            sleep(timing['checking_component_delay'])
+            if element_retry >= 4:
+                break
 
         if operation['command'] == 'type':
             if cmds[0] == 'id':

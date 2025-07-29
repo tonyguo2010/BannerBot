@@ -13,7 +13,7 @@ def preload(file):
     commands.append(ScriptLib.command_target_value("select", "xpath=/html/body/app-root/rccr-wet-template/div/div/main/app-step1/form/rccr-select[2]/div/select", "label=Biweekly (27 pay periods a year)"))
     commands.append(ScriptLib.command_target_value("click", "id=datePaidYear", ""))
     commands.append(ScriptLib.command_target_value("select", "id=datePaidYear", "label=2025"))
-    commands.append(ScriptLib.command_target_value("click", "xpath=//option[@value='2025']", ""))
+    commands.append(ScriptLib.command_target_value("click", "xpath=//option[contains(.,'2025')]", ""))
     commands.append(ScriptLib.command_target_value("click", "xpath=//div/rccr-select[2]/div/select", ""))
     commands.append(ScriptLib.command_target_value("select", "xpath=/html/body/app-root/rccr-wet-template/div/div/main/app-step1/form/fieldset/div[2]/div/div/rccr-select[2]/div/select", "label=July"))
     commands.append(ScriptLib.command_target_value("click", "xpath=//div/rccr-select[2]/div/select/option[3]", ""))
