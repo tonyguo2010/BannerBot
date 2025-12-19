@@ -1,14 +1,18 @@
 import sys
 
 from selenium.common import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.common.by import By
 from time import sleep
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support import expected_conditions as EC
+import random
 
 import ExcelParser
 import JsonParser
 
+from selenium.common.exceptions import TimeoutException
 
 timing = JsonParser.loadJsonFromFile('timing.json')
 
@@ -16,6 +20,14 @@ skips = ['setWindowSize', 'selectFrame']
 base_url : str= ''
 script : str = ''
 
+def wait_for_page_load(driver, timeout=30):
+    """Waits for the document.readyState to be 'complete'."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            lambda d: d.execute_script('return document.readyState') == 'complete'
+        )
+    except TimeoutException:
+        print("Page did not load within the specified timeout.")
 def getKey(key):
     if key == 'Space':
         return Keys.SPACE
@@ -60,85 +72,82 @@ def getKey(key):
 
 
 def set_input(driver, xpath, value):
-    input = driver.find_element(By.XPATH, xpath)
-    # input.send_keys(Keys.BACKSPACE)
+    wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+    input = wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
     input.click()
-    sleep(timing['pre_input'])
     input.clear()
     input.send_keys(value)
-    sleep(timing['after_input'])
 
 
 def get_input(driver, xpath):
-    input = driver.find_element(By.XPATH, xpath)
+    wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+    input = wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
     return input.get_attribute('title')
 
 
 def click_by_xpath(driver, xpath):
     try:
-        btn = driver.find_element(By.XPATH, xpath)
+        wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+        btn = wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
         btn.click()
     except Exception as e:
         print("error in clicking " + xpath)
         print(e)
-    finally:
-        sleep(timing['after_click'])
 
 def click_by_id(driver, id):
     try:
-        btn = driver.find_element(By.ID, id)
+        wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+        btn = wait.until(EC.element_to_be_clickable((By.ID, id)))
         btn.click()
     except Exception as e:
         print("error in clicking " + id)
         print(e)
-    finally:
-        sleep(timing['after_click'])
 
 def select_dropdown_id_text(driver, id, text):
     try:
-        select = Select(driver.find_element(By.ID, id))
+        wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+        select_element = wait.until(EC.presence_of_element_located((By.ID, id)))
+        select = Select(select_element)
         select.select_by_visible_text(text)
     except Exception as e:
         print("error in selecting " + id)
         print(e)
-    finally:
-        sleep(timing['after_select'])
 
 def select_dropdown_text(driver, xpath, text):
     try:
         print(xpath)
         print(text)
-        select = Select(driver.find_element(By.XPATH, xpath))
+        wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+        select_element = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+        select = Select(select_element)
         select.select_by_visible_text(text)
     except Exception as e:
         print("error in selecting " + xpath)
         print(e)
-    finally:
-        sleep(timing['after_select'])
 
 def select_dropdown(driver, xpath, text):
     try:
         print(xpath)
         print(text)
-        select = Select(driver.find_element(By.XPATH, xpath))
+        wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+        select_element = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+        select = Select(select_element)
         select.select_by_value(text)
     except Exception as e:
         print("error in selecting " + xpath)
         print(e)
-    finally:
-        sleep(timing['after_select'])
 
 
 def select_index(driver, xpath, index):
     print('to select index ' + str(index))
     try:
-        select = Select(driver.find_element(By.XPATH, xpath))
+        wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+        select_element = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+        select = Select(select_element)
         select.select_by_index(index)
     except Exception as e:
         print("error in selecting " + xpath)
         print(e)
-    finally:
-        sleep(timing['after_select'])
 
 
 def global_key(driver, key):
@@ -197,6 +206,7 @@ def auto_login(driver):
     login_ID.send_keys(account['ID'])
     login_pwd.send_keys(account['Password'])
     login_pwd.send_keys(Keys.RETURN)
+    wait_for_page_load(driver)
 
 def to_form(driver, form_name):
     driver.get('https://' + envir + '.centennialcollege.ca:7443/BannerAdmin/?form=' + form_name)
@@ -221,7 +231,8 @@ def get_form_name(driver):
 
 
 def set_input_by_xpath(driver, xpath, value):
-    input = driver.find_element(By.XPATH, xpath)
+    wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+    input = wait.until(EC.element_to_be_clickable((By.XPATH, xpath)))
     input.send_keys(Keys.BACKSPACE)
     input.send_keys(Keys.BACKSPACE)
     input.send_keys(Keys.BACKSPACE)
@@ -233,23 +244,18 @@ def set_input_by_xpath(driver, xpath, value):
     input.send_keys(Keys.BACKSPACE)
     input.send_keys(Keys.BACKSPACE)
     input.click()
-    sleep(timing['pre_input'])
     input.clear()
     input.send_keys(value)
-    sleep(timing['after_input'])
 
 def set_input_by_id(driver, id, value):
     print(id)
     print(value)
-    input = driver.find_element(By.ID, id)
-    # print(input)
-    # input.send_keys(Keys.BACKSPACE)
+    wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+    input = wait.until(EC.element_to_be_clickable((By.ID, id)))
     input.click()
-    sleep(timing['pre_input'])
     input.clear()
     print('clear in set_input_by_id')
     input.send_keys(value)
-    sleep(timing['after_input'])
 
 
 def update_employee(employee_id, header, value):
@@ -260,8 +266,8 @@ def update_employee(employee_id, header, value):
 
 
 def get_input_by_xpath(driver, xpath):
-    sleep(timing['pre_input'])
-    table = driver.find_element(By.XPATH, xpath)
+    wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+    table = wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
     rows = table.find_elements(By.TAG_NAME, "tr")  # tr elements represent table rows
 
     # Parse each row
@@ -282,38 +288,33 @@ def get_input_by_xpath(driver, xpath):
 
 
 def get_input_by_id(driver, id):
-    sleep(timing['pre_input'])
-    input = driver.find_element(By.ID, id)
+    wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+    input = wait.until(EC.visibility_of_element_located((By.ID, id)))
     return input.text
     # return input.get_attribute('title')
 
 
 def click_by_css(driver, css):
     try:
-        btn = driver.find_element(By.CSS_SELECTOR, css)
+        wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+        btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, css)))
         btn.click()
     except Exception as e:
         print("error in clicking " + css)
         print(e)
-    finally:
-        sleep(timing['after_click'])
 
 
 def sendkey_by_css(driver, css, value):
-    input = driver.find_element(By.CSS_SELECTOR, css)
+    wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+    input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, css)))
     input.click()
-    sleep(timing['pre_sendkey'])
     input.send_keys(getKey(value))
-    sleep(timing['after_sendkey'])
 
 def sendkey_by_id(driver, id, value):
-    input = driver.find_element(By.ID, id)
-    # print(input)
-    # input.send_keys(Keys.BACKSPACE)
+    wait = WebDriverWait(driver, timing.get('element_timeout', 10))
+    input = wait.until(EC.element_to_be_clickable((By.ID, id)))
     input.click()
-    sleep(timing['pre_sendkey'])
     input.send_keys(getKey(value))
-    sleep(timing['after_sendkey'])
 
 
 def validate_element(driver, value, by):
@@ -333,12 +334,15 @@ def process_operations(driver, operations, header = None, hijack_input = None):
         cmds = operation['target'].split('=')
         print(operation['command'] + ' ' + operation['target'] + ' => ' + operation['value'])
 
-        element_retry = 0
-
-        while cmds[0] in ['id', 'xpath', 'css'] and validate_element(driver, cmds[1], cmds[0]) == False:
-            element_retry += 1
-            sleep(timing['checking_component_delay'])
-            if element_retry >= 4:
+        by_map = {
+            'id': By.ID,
+            'xpath': By.XPATH,
+            'css': By.CSS_SELECTOR
+        }
+        if cmds[0] in by_map:
+            try:
+                WebDriverWait(driver, timing.get('checking_component_delay', 2) * 4).until(EC.presence_of_element_located((by_map[cmds[0]], cmds[1])))
+            except:
                 break
 
         if operation['command'] == 'type':
@@ -355,7 +359,7 @@ def process_operations(driver, operations, header = None, hijack_input = None):
 
         elif operation['command'] == 'open':
             driver.get(operation['target'])
-            sleep(timing['after_sendkey'])
+            wait_for_page_load(driver)
 
         elif operation['command'] == 'sendKeys':
             if cmds[0] == 'css':
@@ -366,8 +370,13 @@ def process_operations(driver, operations, header = None, hijack_input = None):
         elif operation['command'] == 'click':
             if cmds[0] == 'css':
                 click_by_css(driver, cmds[1])
+                if 'next' in cmds[1].lower():
+                    sleep(random.randint(1, 4))
+                    wait_for_page_load(driver)
             elif cmds[0] == 'id':
                 click_by_id(driver, cmds[1])
+                if 'next' in cmds[1].lower():
+                    wait_for_page_load(driver)
 
         elif operation['command'] == 'select':
             value : str = operation['value']
