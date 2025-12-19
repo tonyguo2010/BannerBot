@@ -252,7 +252,8 @@ def incomes(file, detail):
     commands.append(ScriptLib.command_target_value("type", "xpath=//div/rccr-currency-input/div/div/input",  validate_value(detail['LSPM_AMT'])))
 
     # commands.append(ScriptLib.command_target_value("click", "xpath=//div/rccr-currency-input[2]/div/div/input", ""))
-    commands.append(ScriptLib.command_target_value("type", "xpath=//div/rccr-currency-input[2]/div/div/input",  validate_value(detail['CAAT_ON_LSM_AMT'])))
+    # based on the communication with Payroll, we WON'T deduct CAL from any retro. All the RRSP deduction will be applied on regular income in the future.  12:30 PM Friday, August 22, 2025
+    # commands.append(ScriptLib.command_target_value("type", "xpath=//div/rccr-currency-input[2]/div/div/input",  validate_value(detail['CAAT_ON_LSM_AMT'])))
 
     # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-currency-input[3]/div/div/input", ""))
     commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-currency-input[3]/div/div/input",  validate_value(detail['LYTD_AMT'])))
@@ -1021,16 +1022,21 @@ def additional(file, detail):
     commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-currency-input[3]/div/div/input", validate_value(detail['ONT_PER_TAX_CRD'])))
 
     # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-integer-input/div/div/input", ""))
-    commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-integer-input/div/div/input", validate_value(detail['PEN_MON'], True)))
+    # if the pen_mon is 0, cpp exempt
+    if detail['PEN_MON'] == 0:  # //rccr-radio-button/div/label/input
+        commands.append(ScriptLib.command_target_value("click", "css=rccr-button-group:nth-child(3) .ng-untouched:nth-child(3) > .radio span:nth-child(2)", ""))
+    else:   # /html/body/app-root/rccr-wet-template/div/div/main/app-step3/form/rccr-button-group[1]/div/fieldset/div/rccr-integer-input/div/div/input
+        commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-integer-input/div/div/input", validate_value(detail['PEN_MON'], True)))
 
-    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input/div/div/input", ""))
-    commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input/div/div/input", validate_value(detail['C2_AG_YTD'])))
+        # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input/div/div/input", ""))
+        commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input/div/div/input", validate_value(detail['C2_AG_YTD'])))
 
-    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input[2]/div/div/input", ""))
-    commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input[2]/div/div/input", validate_value(detail['CP_YTD'])))
+        # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input[2]/div/div/input", ""))
+        commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input[2]/div/div/input", validate_value(detail['CP_YTD'])))
 
-    # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input[3]/div/div/input", ""))
-    commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input[3]/div/div/input", validate_value(detail['C2_YTD'])))
+        # commands.append(ScriptLib.command_target_value("click", "xpath=//div/fieldset/div/rccr-currency-input[3]/div/div/input", ""))
+        commands.append(ScriptLib.command_target_value("type", "xpath=//div/fieldset/div/rccr-currency-input[3]/div/div/input", validate_value(detail['C2_YTD'])))
+
 
     # commands.append(ScriptLib.command_target_value("click", "xpath=//rccr-button-group[2]/div/fieldset/div/rccr-currency-input/div/div/input", ""))
     commands.append(ScriptLib.command_target_value("type", "xpath=//rccr-button-group[2]/div/fieldset/div/rccr-currency-input/div/div/input", validate_value(detail['EI_AG_YTD'])))
